@@ -83,7 +83,15 @@ write_files:
 
   path: /etc/bird/bird.conf
   owner: root:root
-
+packages:
+- bird
+runcmd:
+- ['sysctl', '-w', 'net.ipv4.ip_forward=1']
+- ['systemctl', 'restart', 'bird']
+# TODO:
+# - ['ip', 'a', 'a', 'dev', 'lo', 'brd', '+', 'TODO_STABLE_IP']
+# TODO:
+# - ['iptables', '-t', 'nat', '-A', 'POSTROUTING', '-o', 'eth0', '-j', 'SNAT', '--to', 'TODO']
 network:
   version: 2
   ethernets:
