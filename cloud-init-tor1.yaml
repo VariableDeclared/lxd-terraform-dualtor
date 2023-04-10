@@ -1,6 +1,4 @@
 #cloud-config
-# vim: syntax=yaml
-
 write_files:
 - encoding: b64
   content: CiMgVGhpcyBmaWxlIGNvbnRyb2xzIHRoZSBzdGF0ZSBvZiBTRUxpbnV4...

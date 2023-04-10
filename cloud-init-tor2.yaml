@@ -1,6 +1,4 @@
 #cloud-config
-# vim: syntax=yaml
-
 write_files:
 - encoding: b64
   content: CiMgVGhpcyBmaWxlIGNvbnRyb2xzIHRoZSBzdGF0ZSBvZiBTRUxpbnV4...
@@ -98,7 +96,7 @@ network:
           dhcp4: true
       eth1:
           dhcp4: false
-          addresses: [10.33.1.1/24]
+          addresses: [10.33.1.2/24]
       eth2:
           dhcp4: false
-          addresses: [10.33.2.1/24]
+          addresses: [10.33.2.2/24]

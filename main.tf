@@ -121,7 +121,7 @@ resource "lxd_profile" "dual_tor_profile" {
 # }
 resource "lxd_container" "ToR1" {
   name      = "ToR1"
-  image     = "images:ubuntu/22.04"
+  image     = "ubuntu:jammy"
   ephemeral = false
   profiles  = ["${lxd_profile.dual_tor_profile.name}"]
 
@@ -137,7 +137,7 @@ resource "lxd_container" "ToR1" {
 
 resource "lxd_container" "ToR2" {
   name      = "ToR2"
-  image     = "images:ubuntu/22.04"
+  image     = "ubuntu:jammy"
   ephemeral = false
   profiles  = ["${lxd_profile.dual_tor_profile.name}"]
 
