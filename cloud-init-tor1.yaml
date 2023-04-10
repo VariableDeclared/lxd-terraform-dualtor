@@ -1,0 +1,104 @@
+#cloud-config
+# vim: syntax=yaml
+
+write_files:
+- encoding: b64
+  content: CiMgVGhpcyBmaWxlIGNvbnRyb2xzIHRoZSBzdGF0ZSBvZiBTRUxpbnV4...
+  owner: root:root
+  path: /etc/sysconfig/selinux
+  permissions: '0644'
+- content: |
+    # My new /etc/sysconfig/samba file
+
+
+    log syslog all;
+    debug protocols all;
+    debug protocols { events, states };
+
+
+
+
+    filter packet_bgp {
+      # the IP range(s) to announce via BGP from this machine
+      # these IP addresses need to be bound to the lo interface
+      # to be reachable; the default behaviour is to accept all
+      # prefixes bound to interface lo
+      # if net = A.B.C.D/32 then accept;
+      accept;
+    }
+
+
+
+
+    router id 10.33.21.1;
+
+
+
+
+    protocol direct {
+      interface "lo"; # Restrict network interfaces BIRD works with
+    }
+
+
+
+
+    protocol kernel {
+    #  persist; # Don't remove routes on bird shutdown
+      scan time 20; # Scan kernel routing table every 20 seconds
+      import all; # Default is import all
+      export all; # Default is export none
+    }
+
+
+
+
+    # This pseudo-protocol watches all interface up/down events.
+    protocol device {
+      scan time 10; # Scan interfaces every 10 seconds
+    }
+
+
+    protocol static {
+      route 0.0.0.0/1 via 10.165.186.1;
+      route 128.0.0.0/1 via 10.165.186.1;
+    }
+
+
+    filter stable_address_only {
+      if ( net = 10.33.21.1/32 ) then { accept; }
+      if ( net = 0.0.0.0/1 ) then { accept; }
+      if ( net = 128.0.0.0/1 ) then { accept; }
+    }
+
+
+    protocol bgp neighbor_v4_1 {
+      export filter packet_bgp;
+      local as 4255079353;
+      neighbor 10.33.1.11 port 8179 as 4255000001; # IP from the virtual switch
+      export filter stable_address_only;
+    }
+
+
+
+
+    protocol bgp neighbor_v4_2 {
+      export filter packet_bgp;
+      local as 4255079609;
+      neighbor 10.33.2.11 port 8179 as 4255000001; # IP from the virtual switch
+      export filter stable_address_only;
+    }
+
+  path: /etc/bird/bird.conf
+  owner: root:root
+
+network:
+  version: 2
+  ethernets:
+      eth0:
+          dhcp4: true
+      eth1:
+          dhcp4: false
+          addresses: [10.33.1.1/24]
+      eth2:
+          dhcp4: false
+          addresses: [10.33.2.1/24]
